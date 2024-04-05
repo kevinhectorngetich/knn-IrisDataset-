@@ -18,7 +18,7 @@ def loadDataset(filename, split, trainingSet=[], testSet=[]):
 
 trainingSet = []
 testSet = []
-loadDataset(r'Iris.csv', 0.66, trainingSet, testSet)
+loadDataset(r'/kaggle/input/iriscsv/Iris.csv', 0.66, trainingSet, testSet)
 print('Train: ' + repr(len(trainingSet)))
 print('Test: ' + repr(len(testSet)))
 
@@ -93,16 +93,13 @@ predictions = ['a', 'a', 'a']
 accuracy = getAccuracy(testSet, predictions)
 print(accuracy)
 
-
-
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
-
 # Load the Iris dataset
-iris = pd.read_csv('Iris.csv')
+iris = pd.read_csv('/kaggle/input/iriscsv/Iris.csv')
 
 # Basic data exploration
 iris.groupby('Species').describe() 
