@@ -93,6 +93,40 @@ predictions = ['a', 'a', 'a']
 accuracy = getAccuracy(testSet, predictions)
 print(accuracy)
 
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+# Load the Iris dataset
+iris = pd.read_csv('Iris.csv')
+
+# Basic data exploration
+iris.groupby('Species').describe()
+
+# Visualize the relationship between two features
+plt.scatter(iris['SepalLengthCm'], iris['SepalWidthCm'], c=iris['Species'])
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.show()
+
+# Model training and hyperparameter tuning
+X = iris[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']]
+y = iris['Species']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+accuracy_scores = []
+for k in range(1, 11):
+  knn = KNeighborsClassifier(n_neighbors=k)
+  knn.fit(X_train, y_train)
+  accuracy_scores.append(knn.score(X_test, y_test))
+
+plt.plot(range(1, 11), accuracy_scores)
+plt.xlabel('k (Number of Neighbors)')
+plt.ylabel('Accuracy')
+plt.show()
+
 
 # combine all using one main function:
 def main():
