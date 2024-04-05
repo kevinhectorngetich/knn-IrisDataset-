@@ -6,8 +6,9 @@ def loadDataset(filename, split, trainingSet=[], testSet=[]):
     with open(filename, 'r') as csvfile:
         lines = csv.reader(csvfile)
         dataset = list(lines)
-        for x in range(len(dataset) - 1):
-            for y in range(4):
+        header = dataset.pop(0)  # Remove and store the header row 
+        for x in range(len(dataset)):
+            for y in range(5):  
                 dataset[x][y] = float(dataset[x][y])
             if random.random() < split:
                 trainingSet.append(dataset[x])
@@ -23,7 +24,6 @@ print('Test: ' + repr(len(testSet)))
 
 # SIMILARITY
 import math
-
 
 def euclideanDistance(instance1, instance2, length):
     distance = 0
@@ -93,19 +93,25 @@ predictions = ['a', 'a', 'a']
 accuracy = getAccuracy(testSet, predictions)
 print(accuracy)
 
+
+
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
+
 # Load the Iris dataset
 iris = pd.read_csv('Iris.csv')
 
 # Basic data exploration
-iris.groupby('Species').describe()
+iris.groupby('Species').describe() 
+
+# Define color map
+color_map = {'Iris-setosa': 'blue', 'Iris-versicolor': 'green', 'Iris-virginica': 'red'}
 
 # Visualize the relationship between two features
-plt.scatter(iris['SepalLengthCm'], iris['SepalWidthCm'], c=iris['Species'])
+plt.scatter(iris['SepalLengthCm'], iris['SepalWidthCm'], c=iris['Species'].map(color_map))
 plt.xlabel('Sepal Length (cm)')
 plt.ylabel('Sepal Width (cm)')
 plt.show()
@@ -130,22 +136,27 @@ plt.show()
 
 # combine all using one main function:
 def main():
-    # prepare data
+    # Prepare data
     trainingSet = []
     testSet = []
     split = 0.67
     loadDataset('Iris.csv', split, trainingSet, testSet)
     print('Train set: ' + repr(len(trainingSet)))
     print('Test set: ' + repr(len(testSet)))
-    # generate predictions
-    predictions = []
-    k = 3
-    for x in range(len(testSet)):
-        neighbors = getNeighbors(trainingSet, testSet[x], k)
-        result = getResponse(neighbors)
-        predictions.append(result)
-        print('> predicted=' + repr(result) + ', actual=' + repr(testSet[x][-1]))
+
+    # Model training and hyperparameter tuning (no changes needed here)
+    X = iris[['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']]
+    y = iris['Species']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+    # Generate predictions (using scikit-learn)
+    knn = KNeighborsClassifier(n_neighbors=3)
+    knn.fit(X_train, y_train)  
+    predictions = knn.predict(X_test)
+
+    # Calculate Accuracy
     accuracy = getAccuracy(testSet, predictions)
     print('Accuracy: ' + repr(str(accuracy)) + '%')
 
 main()
+
